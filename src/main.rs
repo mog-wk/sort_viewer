@@ -39,8 +39,8 @@ fn main() -> Result<()> {
     canvas.clear();
 
     // dev test
-    //let mut test_arr: [u32; 6] = [4, 3, 2, 5, 1, 6];
-    let mut test_arr: [u32; 4] = [4, 3, 100, 40];
+    let mut test_arr: [u32; 6] = [4, 3, 2, 5, 1, 6];
+    //let mut test_arr: [u32; 4] = [4, 3, 100, 40];
 
     // preprocess input
 
@@ -50,7 +50,9 @@ fn main() -> Result<()> {
     let h_margin: i32 = 80;
     let v_margin: i32 = 40;
     let h_padding = (window_width - 2 * h_margin) / test_arr.len() as i32;
+    let inner_padding = 32;
     let box_height: i32 = window_height - 2 * v_margin;
+    let box_unit: i32 = box_height / limits.1 as i32;
 
     println!("{} {} {}", h_margin, v_margin, h_padding);
 
@@ -59,14 +61,14 @@ fn main() -> Result<()> {
 
     canvas.draw_line(
         Point::new(h_margin, v_margin),
-        Point::new(window_width - h_margin, v_margin),
+        Point::new(window_width - h_margin - inner_padding, v_margin),
     );
     canvas.draw_line(
-        Point::new(window_width - h_margin, v_margin),
-        Point::new(window_width - h_margin, window_height - v_margin),
+        Point::new(window_width - h_margin - inner_padding, v_margin),
+        Point::new(window_width - h_margin - inner_padding, window_height - v_margin),
     );
     canvas.draw_line(
-        Point::new(window_width - h_margin, window_height - v_margin),
+        Point::new(window_width - h_margin - inner_padding, window_height - v_margin),
         Point::new(h_margin, window_height - v_margin),
     );
     canvas.draw_line(
@@ -101,13 +103,13 @@ fn main() -> Result<()> {
             let e = test_arr[i];
             let i = i as i32;
 
-            let x = h_margin + i * h_padding as i32;
-            let y = box_height - (v_margin + e as i32);
-            let w = h_padding as u32 - 32;
-            let h = box_height - y + v_margin- 2;
+            let x: i32 = h_margin + i * h_padding as i32;
+            let y: i32 = box_height + v_margin - (e as i32 * box_unit);
+            let w: u32 = (h_padding - inner_padding) as u32;
+            let h: u32 = (window_height - v_margin - y) as u32;
 
             println!("{}: {} {} {} {}", e, x, y, w, h);
-            canvas.fill_rect(Rect::new(x, y, w, h as u32));
+            canvas.fill_rect(Rect::new(x, y, w, h));
         }
         canvas.fill_rect(Rect::new(12 ,12, 36, 36));
         canvas.present();
