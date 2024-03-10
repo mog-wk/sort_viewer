@@ -44,15 +44,15 @@ fn main() -> Result<()> {
 
     // preprocess input
 
-    utils::array::get_limits(&test_arr);
+    let limits = utils::array::get_limits(&test_arr);
 
     // border configs
     let h_margin: i32 = 80;
     let v_margin: i32 = 40;
-    let h_padding = (window_width - 2*h_margin) / test_arr.len() as i32;
-    let v_scale = (window_height - 2*v_margin) / 6;
+    let h_padding = (window_width - 2 * h_margin) / test_arr.len() as i32;
+    let box_height: i32 = window_height - 2 * v_margin;
 
-    println!("{} {} {} {}", h_margin, v_margin, h_padding, v_scale);
+    println!("{} {} {}", h_margin, v_margin, h_padding);
 
     // draw canvas border
     canvas.set_draw_color(Color::RGB(255, 255, 255));
@@ -75,7 +75,6 @@ fn main() -> Result<()> {
     );
     canvas.present();
 
-
     canvas.set_draw_color(Color::RGB(127, 255, 127));
 
     let mut event_pump = sdl_context.event_pump()?;
@@ -94,20 +93,21 @@ fn main() -> Result<()> {
 
         if paused || step == 0 {
             continue;
-        }
-        if step > 0 {
+        } else {
             step -= 1;
         }
+
         for i in 0..test_arr.len() {
             let e = test_arr[i];
             let i = i as i32;
 
             let x = h_margin + i * h_padding as i32;
-            let y = v_margin + (e) as i32;
+            let y = box_height - (v_margin + e as i32);
             let w = h_padding as u32 - 32;
-            let h = (window_height - v_margin * 2) as u32 - 12 - e;
-            println!("{} {} {} {}", x, y, w, h);
-            canvas.fill_rect(Rect::new(x, y, w, h));
+            let h = box_height - y + v_margin- 2;
+
+            println!("{}: {} {} {} {}", e, x, y, w, h);
+            canvas.fill_rect(Rect::new(x, y, w, h as u32));
         }
         canvas.fill_rect(Rect::new(12 ,12, 36, 36));
         canvas.present();
