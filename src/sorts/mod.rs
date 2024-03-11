@@ -1,3 +1,3 @@
-mod counting;
-mod selection;
-mod insertion;
+pub mod counting;
+pub mod selection;
+pub mod insertion;

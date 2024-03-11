@@ -14,7 +14,6 @@ use sdl2::rect::{ Rect, Point };
 use std::time::Duration;
 use std::thread::sleep;
 
-
 fn main() -> Result<()> {
     println!("Hello, world!");
     let sdl_context = sdl2::init()?;
@@ -45,6 +44,9 @@ fn main() -> Result<()> {
     // preprocess input
 
     let limits = utils::array::get_limits(&test_arr);
+    //let path = spath.gen_path(&test_arr, crate::sorts::insertion::sort_path);
+    
+    println!("{:?}", test_arr);
 
     // border configs
     let h_margin: i32 = 80;
@@ -53,8 +55,6 @@ fn main() -> Result<()> {
     let inner_padding = 32;
     let box_height: i32 = window_height - 2 * v_margin;
     let box_unit: i32 = box_height / limits.1 as i32;
-
-    println!("{} {} {}", h_margin, v_margin, h_padding);
 
     // draw canvas border
     canvas.set_draw_color(Color::RGB(255, 255, 255));
@@ -77,7 +77,6 @@ fn main() -> Result<()> {
     );
     canvas.present();
 
-    canvas.set_draw_color(Color::RGB(127, 255, 127));
 
     let mut event_pump = sdl_context.event_pump()?;
     let mut paused = false;
@@ -86,19 +85,31 @@ fn main() -> Result<()> {
     'run: loop {
         for event in event_pump.poll_iter() {
             match event {
-                Event::KeyDown { keycode: Some(Keycode::Escape), .. } => break 'run,
+                Event::KeyDown { keycode: Some(Keycode::Escape), .. } | Event::Quit {..}  => break 'run,
                 Event::KeyDown { keycode: Some(Keycode::P), .. } => paused = !paused,
                 Event::KeyDown { keycode: Some(Keycode::S), .. } => step += 1,
                 _ => (),
             }
         }
 
+        // time control
         if paused || step == 0 {
             continue;
         } else {
             step -= 1;
         }
 
+        // sort step
+
+        let changed_indexes = sorts::insertion::sort(&mut canvas, &mut test_arr);
+
+        println!("{:?}", test_arr);
+
+        // render bars
+        canvas.set_draw_color(Color::RGB(0, 0, 0));
+        canvas.clear();
+
+        canvas.set_draw_color(Color::RGB(127, 255, 127));
         for i in 0..test_arr.len() {
             let e = test_arr[i];
             let i = i as i32;
@@ -108,7 +119,7 @@ fn main() -> Result<()> {
             let w: u32 = (h_padding - inner_padding) as u32;
             let h: u32 = (window_height - v_margin - y) as u32;
 
-            println!("{}: {} {} {} {}", e, x, y, w, h);
+            //println!("{}: {} {} {} {}", e, x, y, w, h);
             canvas.fill_rect(Rect::new(x, y, w, h));
         }
         canvas.fill_rect(Rect::new(12 ,12, 36, 36));

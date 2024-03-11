@@ -1,5 +1,5 @@
 
-fn sort(arr: &mut [i32], max: i32) {
+pub fn sort(arr: &mut [i32], max: i32) {
     let max = max as usize;
     let mut count_arr = vec![0; max+1];
 
@@ -15,6 +15,11 @@ fn sort(arr: &mut [i32], max: i32) {
             i += 1;
         }
     }
+}
+
+// return changed elements 's  index
+pub fn sort_step(arr: &mut [u32]) -> (usize, usize) {
+    todo!()
 }
 
 #[cfg(test)]
