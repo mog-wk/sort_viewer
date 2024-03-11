@@ -3,6 +3,7 @@
 mod error;
 mod sorts;
 mod utils;
+mod rendering;
 
 pub type Result<T> = core::result::Result<T, error::Error>;
 
@@ -13,6 +14,8 @@ use sdl2::rect::{ Rect, Point };
 
 use std::time::Duration;
 use std::thread::sleep;
+
+use rendering::sorter::SorterBox;
 
 fn main() -> Result<()> {
     println!("Hello, world!");
@@ -54,29 +57,16 @@ fn main() -> Result<()> {
     let h_padding = (window_width - 2 * h_margin) / test_arr.len() as i32;
     let inner_padding = 32;
     let box_height: i32 = window_height - 2 * v_margin;
+
+    let sort_box = SorterBox::new(
+        (80, 40),
+        (0, box_height),
+        h_padding,
+        32,
+    );
     let box_unit: i32 = box_height / limits.1 as i32;
 
-    // draw canvas border
-    canvas.set_draw_color(Color::RGB(255, 255, 255));
-
-    canvas.draw_line(
-        Point::new(h_margin, v_margin),
-        Point::new(window_width - h_margin - inner_padding, v_margin),
-    );
-    canvas.draw_line(
-        Point::new(window_width - h_margin - inner_padding, v_margin),
-        Point::new(window_width - h_margin - inner_padding, window_height - v_margin),
-    );
-    canvas.draw_line(
-        Point::new(window_width - h_margin - inner_padding, window_height - v_margin),
-        Point::new(h_margin, window_height - v_margin),
-    );
-    canvas.draw_line(
-        Point::new(h_margin, window_height - v_margin),
-        Point::new(h_margin, v_margin),
-    );
-    canvas.present();
-
+    sort_box.render_border(&mut canvas, (window_width, window_height));
 
     let mut event_pump = sdl_context.event_pump()?;
     let mut paused = false;
@@ -105,23 +95,12 @@ fn main() -> Result<()> {
 
         println!("{:?}", test_arr);
 
-        // render bars
         canvas.set_draw_color(Color::RGB(0, 0, 0));
         canvas.clear();
 
-        canvas.set_draw_color(Color::RGB(127, 255, 127));
-        for i in 0..test_arr.len() {
-            let e = test_arr[i];
-            let i = i as i32;
+        // render bars
+        sort_box.render(&mut canvas, &mut test_arr, box_unit, window_height);
 
-            let x: i32 = h_margin + i * h_padding as i32;
-            let y: i32 = box_height + v_margin - (e as i32 * box_unit);
-            let w: u32 = (h_padding - inner_padding) as u32;
-            let h: u32 = (window_height - v_margin - y) as u32;
-
-            //println!("{}: {} {} {} {}", e, x, y, w, h);
-            canvas.fill_rect(Rect::new(x, y, w, h));
-        }
         canvas.fill_rect(Rect::new(12 ,12, 36, 36));
         canvas.present();
 
