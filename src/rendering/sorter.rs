@@ -65,10 +65,17 @@ impl SorterBox {
         arr: &mut [u32],
         box_unit: i32,
         window_height: i32,
+        target_index: (usize, usize),
     ) {
         let w: i32 = self.h_padding - self.inner_padding;
         // render bars
         for i in 0..arr.len() {
+            if i == target_index.0 || i == target_index.1 {
+                canvas.set_draw_color(Color::RGB(255, 127, 0));
+            } else {
+                canvas.set_draw_color(Color::RGB(127, 255, 127));
+            }
+
             let e = arr[i];
             let i = i as i32;
 
@@ -78,7 +85,6 @@ impl SorterBox {
 
             println!("{} {} {} {}", x, y, w, h);
 
-            canvas.set_draw_color(Color::RGB(127, 255, 127));
             canvas.fill_rect(Rect::new(x, y, w as u32, h as u32));
             canvas.set_draw_color(Color::RGB(127, 0, 0));
             canvas.draw_line(

@@ -44,16 +44,16 @@ fn main() -> Result<()> {
 
     // dev test let mut test_arr: [u32; 6] = [4, 3, 2, 5, 1, 6]; let mut test_arr: [u32; 4] = [4,
     // 3, 100, 40];
-    let mut test_arr: [u32; 71] = [
+    let mut test_arr: [u32; 100] = [
         1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,
         14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25,
         26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36,
         37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48,
         49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59,
         60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71,
-        //72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82,
-        //83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94,
-        //95, 96, 97, 98, 99, 100,
+        72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82,
+        83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94,
+        95, 96, 97, 98, 99, 100,
     ];
     test_arr.shuffle(&mut rng);
 
@@ -65,9 +65,9 @@ fn main() -> Result<()> {
     println!("{:?}", test_arr);
 
     // border configs
-    let h_margin: i32 = 4;
+    let h_margin: i32 = 50;
     let v_margin: i32 = 40;
-    let inner_padding = 2;
+    let inner_padding = 1;
     let h_padding = (window_width - 2 * h_margin) / test_arr.len() as i32 ;
     let box_height: i32 = window_height - 2 * v_margin;
 
@@ -111,24 +111,31 @@ fn main() -> Result<()> {
         // sort step
         let changed_indexes = sorts::insertion::sort(&mut canvas, &mut test_arr);
 
-        println!("{:?}", test_arr);
+        match changed_indexes {
+            Some(ind) => {
+                println!("{:?}", test_arr);
 
-        canvas.set_draw_color(Color::RGB(0, 0, 0));
-        canvas.clear();
+                canvas.set_draw_color(Color::RGB(0, 0, 0));
+                canvas.clear();
 
-        sort_box.render_border(&mut canvas, (window_width, window_height));
+                sort_box.render_border(&mut canvas, (window_width, window_height));
 
-        // render bars
-        sort_box.render(&mut canvas, &mut test_arr, box_unit, window_height);
+                // render bars
+                sort_box.render(&mut canvas, &mut test_arr, box_unit, window_height, ind);
 
-        canvas.fill_rect(Rect::new(12 ,12, 36, 36));
-        canvas.present();
+                canvas.fill_rect(Rect::new(12 ,12, 36, 36));
+                canvas.present();
+            },
+            None => {
+                paused = true;
+            },
+        }
 
         if !paused {
             sleep(Duration::from_millis(1));
         }
 
-        sleep(Duration::new(0, 1_000_000_000_u32 / 60));
+        //sleep(Duration::new(0, 1_000_000_000_u32 / 60));
     }
     Ok(())
 }
