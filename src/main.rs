@@ -103,13 +103,15 @@ fn main() -> Result<()> {
 
         // time control
         if paused {
-            continue;
-        } else {
-            step = step.checked_sub(1).unwrap_or(0);
+            if step == 0 {
+                continue;
+            }
         }
+        step = step.checked_sub(1).unwrap_or(0);
 
         // sort step
-        let changed_indexes = sorts::selection::sort(&mut canvas, &mut test_arr);
+        //let changed_indexes = sorts::selection::sort(&mut canvas, &mut test_arr);
+        let changed_indexes = sorts::insertion::sort(&mut canvas, &mut test_arr);
 
         match changed_indexes {
             Some(ind) => {
@@ -128,11 +130,12 @@ fn main() -> Result<()> {
             },
             None => {
                 paused = true;
+                println!("Done!");
             },
         }
 
         if !paused {
-            sleep(Duration::from_millis(1));
+            sleep(Duration::from_millis(40));
         }
 
         //sleep(Duration::new(0, 1_000_000_000_u32 / 60));
