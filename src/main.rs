@@ -109,7 +109,7 @@ fn main() -> Result<()> {
         }
 
         // sort step
-        let changed_indexes = sorts::insertion::sort(&mut canvas, &mut test_arr);
+        let changed_indexes = sorts::selection::sort(&mut canvas, &mut test_arr);
 
         match changed_indexes {
             Some(ind) => {
