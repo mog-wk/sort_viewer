@@ -58,7 +58,6 @@ impl SorterBox {
         canvas.draw_line(b, c);
         canvas.draw_line(c, d);
         canvas.draw_line(d, a);
-        canvas.present();
     }
     pub fn render(
         &self,
@@ -67,20 +66,31 @@ impl SorterBox {
         box_unit: i32,
         window_height: i32,
     ) {
+        let w: i32 = self.h_padding - self.inner_padding;
         // render bars
-        canvas.set_draw_color(Color::RGB(127, 255, 127));
         for i in 0..arr.len() {
             let e = arr[i];
             let i = i as i32;
 
-            let x: i32 = self.margin.0 + i * self.h_padding as i32;
+            let x: i32 = self.margin.0 + i * w;
             let y: i32 = self.dimentions.1 + self.margin.1 - (e as i32 * box_unit);
-            let w: u32 = (self.h_padding - self.inner_padding) as u32;
-            let h: u32 = (window_height - self.margin.1 - y) as u32;
+            let h: i32 = (window_height - self.margin.1 - y);
 
-            //println!("{}: {} {} {} {}", e, x, y, w, h);
-            canvas.fill_rect(Rect::new(x, y, w, h));
+            println!("{} {} {} {}", x, y, w, h);
+
+            canvas.set_draw_color(Color::RGB(127, 255, 127));
+            canvas.fill_rect(Rect::new(x, y, w as u32, h as u32));
+            canvas.set_draw_color(Color::RGB(127, 0, 0));
+            canvas.draw_line(
+                Point::new(x+w-1, y),
+                Point::new(x+w-1, y+h),
+            );
+            canvas.draw_line(
+                Point::new(x+w-2, y),
+                Point::new(x+w-2, y+h),
+            );
         }
+        // debug square
         canvas.fill_rect(Rect::new(12 ,12, 36, 36));
     }
 }
