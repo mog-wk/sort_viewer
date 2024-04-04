@@ -61,8 +61,7 @@ fn main() -> Result<()> {
 
     let limits = utils::array::get_limits(&test_arr);
     //let path = spath.gen_path(&test_arr, crate::sorts::insertion::sort_path);
-    
-    println!("{:?}", test_arr);
+    let quick_sort_queue = crate::sorts::quick::sort_queue(&mut test_arr.clone());
 
     // border configs
     let h_margin: i32 = 50;
@@ -87,6 +86,7 @@ fn main() -> Result<()> {
     let mut event_pump = sdl_context.event_pump()?;
     let mut paused = true;
     let mut step = 1_u32;
+    let mut queue_index = 0;
 
     'run: loop {
         for event in event_pump.poll_iter() {
@@ -111,11 +111,14 @@ fn main() -> Result<()> {
 
         // sort step
         //let changed_indexes = sorts::selection::sort(&mut canvas, &mut test_arr);
-        let changed_indexes = sorts::insertion::sort(&mut canvas, &mut test_arr);
-
+        //let changed_indexes = sorts::insertion::sort(&mut canvas, &mut test_arr);
+        let changed_indexes = quick_sort_queue[queue_index];
         match changed_indexes {
             Some(ind) => {
-                println!("{:?}", test_arr);
+
+                test_arr.swap(ind.0, ind.1);
+
+                queue_index += 1;
 
                 canvas.set_draw_color(Color::RGB(0, 0, 0));
                 canvas.clear();
@@ -127,6 +130,8 @@ fn main() -> Result<()> {
 
                 canvas.fill_rect(Rect::new(12 ,12, 36, 36));
                 canvas.present();
+
+
             },
             None => {
                 paused = true;
